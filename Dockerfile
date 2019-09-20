@@ -15,12 +15,12 @@ RUN yum install -y java-1.8.0-openjdk java-1.8.0-openjdk-devel wget vim
 #    && wget http://10.15.110.8/etc/phantomjs-2.1.1-linux-i686.tar.bz2 -P install
 
 # remote download
-RUN wget http://mirror.bit.edu.cn/apache/tomcat/tomcat-8/v8.5.23/bin/apache-tomcat-8.5.23-windows-x64.zip -P install \
+RUN wget https://mirrors.tuna.tsinghua.edu.cn/apache/tomcat/tomcat-8/v8.5.45/bin/apache-tomcat-8.5.45.tar.gz -P install \
     && wget https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-2.1.1-linux-i686.tar.bz2 -P install
 
-RUN tar -zxf install/apache-tomcat-8.5.23.tar.gz -C /opt \
+RUN tar -zxf install/apache-tomcat-8.5.45.tar.gz -C /opt \
     && tar -jxf install/phantomjs-2.1.1-linux-i686.tar.bz2 -C /opt \
-    && ln -s /opt/apache-tomcat-8.5.23 /opt/apache-tomcat \
+    && ln -s /opt/apache-tomcat-8.5.45 /opt/apache-tomcat \
     && ln -s /opt/phantomjs-2.1.1-linux-i686 /opt/phantomjs-2.1.1
 
 # install Chinese font
