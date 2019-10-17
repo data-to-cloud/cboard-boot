@@ -13,7 +13,6 @@ org/cboard/dao/DatasourceDao.class
 org/cboard/pojo/DashboardRoleRes.class
 org/cboard/dto/ViewDashboardBoard$1.class
 org/cboard/cache/CacheManager.class
-org/cboard/services/HomepageService.class
 org/cboard/security/service/ShareAuthenticationProviderDecorator.class
 org/cboard/dao/WidgetDao.class
 org/cboard/pojo/DashboardJob.class
@@ -24,7 +23,6 @@ org/cboard/pojo/DashboardBoard.class
 org/cboard/controller/WebConfig.class
 org/cboard/services/role/BoardRoleService$Res.class
 org/cboard/services/DataProviderService$Dataset.class
-org/cboard/controller/HomepageController.class
 org/cboard/util/NaturalOrderComparator.class
 org/cboard/kylin/model/KylinModelFactory.class
 org/cboard/services/role/DatasourceRoleService.class
@@ -44,10 +42,8 @@ org/cboard/dataprovider/aggregator/jvm/JvmAggregator$Dimensions.class
 org/cboard/util/json/JSONBuilder.class
 org/cboard/kylin/model/KylinModel1x.class
 org/cboard/kylin/model/KylinModel2x.class
-org/cboard/services/ServiceStatus$Status.class
 org/cboard/dataprovider/config/CompositeConfig.class
 org/cboard/dataprovider/DataProvider.class
-org/cboard/controller/BaseController.class
 org/cboard/dto/ViewDashboardWidget.class
 org/cboard/services/persist/excel/TableXlsProcesser$VCell.class
 org/cboard/cache/HeapCacheManager.class
@@ -55,7 +51,6 @@ org/cboard/dataprovider/aggregator/jvm/JvmAggregator.class
 org/cboard/kylin/KylinModel.class
 org/cboard/security/service/UserDetailsService.class
 org/cboard/dataprovider/result/AggregateResult.class
-org/cboard/pojo/DashboardBoardParam.class
 org/cboard/dto/ViewAggConfig.class
 org/cboard/dataprovider/util/SqlSyntaxHelper.class
 org/cboard/kylin/model/KylinBaseModel.class
@@ -81,7 +76,6 @@ org/cboard/dataprovider/config/ConfigComponent.class
 org/cboard/dataprovider/aggregator/jvm/JvmAggregator$Filter.class
 org/cboard/security/service/LogFilter.class
 org/cboard/services/RoleService.class
-org/cboard/services/ServiceStatus.class
 org/cboard/pojo/DashboardWidget.class
 org/cboard/security/ShareAuthenticationToken.class
 org/cboard/controller/UpdateController.class
@@ -110,13 +104,10 @@ org/cboard/dataprovider/aggregator/Aggregatable.class
 org/cboard/dataprovider/aggregator/h2/Functions.class
 org/cboard/dataprovider/aggregator/jvm/AggregateCollector.class
 org/cboard/dataprovider/aggregator/InnerAggregator.class
-org/cboard/services/BoardService.class
 org/cboard/dto/ViewDashboardJob.class
 org/cboard/services/AdminSerivce.class
-org/cboard/dto/User.class
 org/cboard/dataprovider/aggregator/h2/job/CleanJobExecutor.class
 org/cboard/dataprovider/annotation/QueryParameter$Type.class
-org/cboard/services/AuthenticationService.class
 org/cboard/kylin/TableMap.class
 org/cboard/elasticsearch/query/QueryBuilder.class
 org/cboard/dataprovider/annotation/QueryParameter.class
