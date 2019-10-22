@@ -6,6 +6,7 @@ import org.apache.poi.hssf.usermodel.HSSFClientAnchor;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellRangeUtil;
+import org.apache.poi.xssf.usermodel.XSSFClientAnchor;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,7 +22,8 @@ public class TableXlsProcesser extends XlsProcesser {
     @Override
     protected ClientAnchor drawContent(XlsProcesserContext context) {
         JSONArray tData = context.getData().getJSONArray("data");
-        final ClientAnchor tAnchor = new HSSFClientAnchor();
+        final ClientAnchor tAnchor = new
+                XSSFClientAnchor();
         tAnchor.setCol1(context.getC1());
         tAnchor.setRow1(context.getR1());
         int colSpan = (context.getC2() - context.getC1()) / tData.getJSONArray(0).size();

@@ -2,15 +2,21 @@ package org.cboard.services.persist.excel;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.mysql.cj.xdevapi.JsonArray;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.poi.hssf.usermodel.HSSFPalette;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.util.ArrayUtil;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.cboard.dao.BoardDao;
 import org.cboard.pojo.DashboardBoard;
 import org.cboard.services.persist.PersistContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -36,6 +42,12 @@ public class XlsProcessService {
         return (HSSFWorkbook) context.getWb();
     }
 
+
+
+    public void tableToXlsx(JSONObject data){
+
+    }
+
     public HSSFWorkbook tableToxls(JSONObject data) {
         XlsProcesserContext context = new XlsProcesserContext();
         HSSFWorkbook wb = new HSSFWorkbook();
@@ -51,6 +63,7 @@ public class XlsProcessService {
         context.setTitleStyle(titleStyle);
         context.settStyle(tStyle);
         context.setPercentStyle(percentStyle);
+        //TODO data 超过6万条报错,创建新的sheet。
         Sheet sheet = context.getWb().createSheet();
         context.setBoardSheet(sheet);
         context.setC1(0);
@@ -60,6 +73,7 @@ public class XlsProcessService {
         context.setData(data);
         new TableXlsProcesser().drawContent(context);
         setAutoWidth(sheet);
+
         return wb;
     }
 

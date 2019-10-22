@@ -400,6 +400,7 @@ var crossTable = {
             var formData = new FormData();
             formData.append('data', JSON.stringify({data: data, type: 'table'}));
             xhr.open('POST', 'dashboard/tableToxls.do');
+            // xhr.setRequestHeader('Content-type','multipart/form-data');
             xhr.responseType = 'arraybuffer';
             xhr.onload = function (e) {
                 var blob = new Blob([this.response], {type: "application/vnd.ms-excel"});
@@ -423,11 +424,12 @@ var crossTable = {
                 var rowArray = [];
                 for (var j = 0; j < columns; j++) {
                     var cell = data[i][j].data;
+                    // console.log(cell)
                     var strValue = (cell === undefined || cell === null) ? '' : cell.toString();
-                    strValue.replace(new RegExp('"', 'g'), '""');
-                    if (strValue.search(escMatcher) > -1) {
-                        strValue = '"' + strValue + '"';
-                    }
+                    // strValue.replace(new RegExp('"', 'g'), '""');
+                    // if (strValue.search(escMatcher) > -1) {
+                    //     strValue = '"' + strValue + '"';
+                    // }
                     rowArray.push(strValue);
                 }
                 output += rowArray.join(',') + '\n';

@@ -1,5 +1,8 @@
 package org.cboard.controller;
 
+import cn.hutool.poi.excel.BigExcelWriter;
+import cn.hutool.poi.excel.ExcelUtil;
+import cn.hutool.poi.excel.ExcelWriter;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Charsets;
 import com.google.common.base.Functions;
@@ -27,6 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayOutputStream;
@@ -383,19 +387,18 @@ public class DashboardController extends BaseController {
     }
 
     @RequestMapping(value = "/tableToxls")
-    public ResponseEntity<byte[]> tableToxls(@RequestParam(name = "data") String data) {
-        HSSFWorkbook wb = xlsProcessService.tableToxls(JSONObject.parseObject(data));
+    public ResponseEntity<byte[]> tableToxls(@RequestParam(name = "data") String data, HttpServletResponse response)
+            throws ServletException, IOException {
+//        HSSFWorkbook wb = xlsProcessService.tableToxls(JSONObject.parseObject(data));
+        BigExcelWriter writer = ExcelUtil.getBigWriter("./table.xlsx");
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        try {
-            wb.write(out);
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-            headers.setContentDispositionFormData("attachment", "table.xls");
-            return new ResponseEntity<>(out.toByteArray(), headers, HttpStatus.CREATED);
-        } catch (IOException e) {
-            LOG.error("", e);
-        }
-        return null;
+        List<Object> rows = JSONObject.parseObject(data).getJSONArray("data");
+        writer.write(rows);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+        headers.setContentDispositionFormData("attachment", "table.xls");
+        writer.flush(out);
+        return new ResponseEntity<>(out.toByteArray(), headers, HttpStatus.CREATED);
     }
 
     @RequestMapping(value = "/getJobStatus")
