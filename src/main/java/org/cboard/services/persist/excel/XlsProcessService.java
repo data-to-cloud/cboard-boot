@@ -1,5 +1,10 @@
 package org.cboard.services.persist.excel;
 
+import cn.hutool.core.collection.CollUtil;
+import cn.hutool.poi.excel.BigExcelWriter;
+import cn.hutool.poi.excel.ExcelUtil;
+import cn.hutool.poi.excel.ExcelWriter;
+import cn.hutool.poi.excel.StyleSet;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.mysql.cj.xdevapi.JsonArray;
@@ -15,10 +20,7 @@ import org.cboard.services.persist.PersistContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -73,7 +75,6 @@ public class XlsProcessService {
         context.setData(data);
         new TableXlsProcesser().drawContent(context);
         setAutoWidth(sheet);
-
         return wb;
     }
 
@@ -210,6 +211,7 @@ public class XlsProcessService {
         }
     }
 
+
     private XlsProcesser getProcesser(String type) {
         switch (type) {
             case "jpg":
@@ -233,6 +235,19 @@ public class XlsProcessService {
         titleStyle.setVerticalAlignment(VerticalAlignment.CENTER);
         return titleStyle;
     }
+//    private CellStyle createTitleStyleXlsx(BigExcelWriter writer) {
+//
+//        CellStyle titleStyle = writer.getCellStyle();
+//        titleStyle.setFillForegroundColor(IndexedColors.BLUE.getIndex());
+//        titleStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+//        titleStyle.setFont(font);
+//        titleStyle.setAlignment(HorizontalAlignment.CENTER);
+//        titleStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+//
+//        return titleStyle;
+//    }
+
+
 
     private CellStyle createThStyle(HSSFWorkbook wb) {
         CellStyle thStyle = wb.createCellStyle();
@@ -254,9 +269,46 @@ public class XlsProcessService {
         thStyle.setFont(font);
         return thStyle;
     }
+    private CellStyle createThStyleXlsx(BigExcelWriter writer) {
+        CellStyle thStyle = writer.getCellStyle();
+        thStyle.setFillForegroundColor(IndexedColors.BLUE.getIndex());
+        thStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+        thStyle.setBorderBottom(BorderStyle.THIN);
+        thStyle.setBottomBorderColor(IndexedColors.BLUE_GREY.getIndex());
+        thStyle.setBorderLeft(BorderStyle.THIN);
+        thStyle.setLeftBorderColor(IndexedColors.BLUE_GREY.getIndex());
+        thStyle.setBorderRight(BorderStyle.THIN);
+        thStyle.setRightBorderColor(IndexedColors.BLUE_GREY.getIndex());
+        thStyle.setBorderTop(BorderStyle.THIN);
+        thStyle.setTopBorderColor(IndexedColors.BLUE_GREY.getIndex());
+        thStyle.setAlignment(HorizontalAlignment.CENTER);
+        thStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+        thStyle.setShrinkToFit(true);
+        Font font = writer.createFont();
+        font.setColor(IndexedColors.WHITE.getIndex());
+        thStyle.setFont(font);
+        return thStyle;
+    }
+
+
 
     private CellStyle createTStyle(HSSFWorkbook wb) {
         CellStyle tStyle = wb.createCellStyle();
+        tStyle.setBorderBottom(BorderStyle.THIN);
+        tStyle.setBottomBorderColor(IndexedColors.GREY_25_PERCENT.getIndex());
+        tStyle.setBorderLeft(BorderStyle.THIN);
+        tStyle.setLeftBorderColor(IndexedColors.GREY_25_PERCENT.getIndex());
+        tStyle.setBorderRight(BorderStyle.THIN);
+        tStyle.setRightBorderColor(IndexedColors.GREY_25_PERCENT.getIndex());
+        tStyle.setBorderTop(BorderStyle.THIN);
+        tStyle.setTopBorderColor(IndexedColors.GREY_25_PERCENT.getIndex());
+        tStyle.setAlignment(HorizontalAlignment.CENTER);
+        tStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+        tStyle.setShrinkToFit(true);
+        return tStyle;
+    }
+    private CellStyle createTStyleXlsx(BigExcelWriter writer) {
+        CellStyle tStyle = writer.getCellStyle();
         tStyle.setBorderBottom(BorderStyle.THIN);
         tStyle.setBottomBorderColor(IndexedColors.GREY_25_PERCENT.getIndex());
         tStyle.setBorderLeft(BorderStyle.THIN);
@@ -278,4 +330,179 @@ public class XlsProcessService {
         customPalette.setColorAtIndex(IndexedColors.GREY_25_PERCENT.index, (byte) 235, (byte) 235, (byte) 235);
     }
 
+    public void data2list(ExcelWriter writer , JSONObject datas) {
+//        BigExcelWriter writer = ExcelUtil.getBigWriter("./table.xlsx");
+        List<Object> dataList = datas.getJSONArray("data");
+        XlsxProcesserContext context = new XlsxProcesserContext();
+        List<List<Object>> rows = new ArrayList<>();
+
+
+        // 表头列表
+        List<List<JSONObject>> titleList = new ArrayList();
+
+
+        for(int i = 0; i < dataList.size(); i++) {
+            List<Object> cell = new ArrayList<>();
+            List<JSONObject> titleMap = new ArrayList<>();
+
+            JSONArray arr = (JSONArray) dataList.get(i);
+            for(int j = 0; j < arr.size(); j++) {
+                JSONObject obj = arr.getJSONObject(j);
+                String property = obj.getString("property");
+                Object data = obj.get("data");
+
+                switch (property) {
+                    case "header_key" :
+                    case "header_empty" :
+                        titleMap.add(obj);
+                    case "column_key" :
+                    default:
+                        cell.add(data);
+                        break;
+                }
+
+            }
+            if(!titleMap.isEmpty()) {
+                titleList.add(titleMap);
+            }
+            //总数据
+            rows.add(cell);
+        }
+        writer.write(rows);
+
+
+        //处理合并
+        for(int i = 0; i < titleList.size() ; i++) {
+            List<JSONObject> titleMap = titleList.get(i);
+
+            List<Map<String,Integer>> ColumnIndex = new ArrayList<>();
+
+            //存索引
+            Map<String,Object> indexMap = new HashMap<>();
+
+
+            //合并个数
+            Map<String,Integer> result = new HashMap();
+
+            int startIndex = titleMap.size(); //合并出使索引
+            int endIndex = titleMap.size();   //合并结束索引
+            indexMap.put("startIndex",startIndex);
+            indexMap.put("endIndex",endIndex);
+
+            for(int j = (titleMap.size()-1) ; j >= 0 ; j--) {
+                JSONObject obj = titleMap.get(j);
+                String data = obj.getString("data");
+
+                if(result.containsKey(data)) {
+                    startIndex = j;
+                    result.put(data,result.get(data) + 1);
+
+                }else {
+                    result.put(data,1); //合并数量
+
+                    if(startIndex != endIndex) {
+                        //合并单元格
+                        if(result.get(indexMap.get("flag")) == 1) {
+
+                        } else {
+                            endIndex = startIndex + result.get(indexMap.get("flag")) - 1;
+                            writer.merge(i,i,startIndex,endIndex,indexMap.get("flag"), true);
+                        }
+                        //初始化index
+                        startIndex = endIndex = j;
+
+                    }else {
+
+                    }
+                }
+                indexMap.put("flag",data); //合并标志
+            }
+        }
+
+
+        //设置头样式
+//        for(int i = 0; i < titleList.size() ; i++) {
+//            Row row = writer.getOrCreateRow(i);
+//            CellStyle rowStyle = row.getRowStyle();
+//            rowStyle.setFillBackgroundColor(IndexedColors.BLUE.getIndex());
+//            Font font = writer.createFont();
+//            font.setColor(IndexedColors.WHITE.getIndex());
+//            rowStyle.setFont(font);
+//            row.setRowStyle(rowStyle);
+//
+//
+////            rowStyle.setFillForegroundColor(IndexedColors.BLUE.getIndex());
+////            rowStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+////            rowStyle.setBorderBottom(BorderStyle.THIN);
+////            rowStyle.setBottomBorderColor(IndexedColors.BLUE_GREY.getIndex());
+////            rowStyle.setBorderLeft(BorderStyle.THIN);
+////            rowStyle.setLeftBorderColor(IndexedColors.BLUE_GREY.getIndex());
+////            rowStyle.setBorderRight(BorderStyle.THIN);
+////            rowStyle.setRightBorderColor(IndexedColors.BLUE_GREY.getIndex());
+////            rowStyle.setBorderTop(BorderStyle.THIN);
+////            rowStyle.setTopBorderColor(IndexedColors.BLUE_GREY.getIndex());
+////            rowStyle.setAlignment(HorizontalAlignment.CENTER);
+////            rowStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+////            rowStyle.setShrinkToFit(true);
+////            Font font = writer.createFont();
+////            font.setColor(IndexedColors.WHITE.getIndex());
+////            rowStyle.setFont(font);
+//        }
+
+
+        System.out.println("成功");
+
+    }
+
+
+    public static void main(String[] args) {
+        BigExcelWriter writer = ExcelUtil.getBigWriter("./writeBeanTest.xlsx");
+        //自定义标题别名
+//        writer.addHeaderAlias("name", "姓名");
+//        writer.addHeaderAlias("age", "年龄");
+//        writer.addHeaderAlias("score", "分数");
+//        writer.addHeaderAlias("isPass", "是否通过");
+////        writer.merge(4, "一班成绩单");
+//        Map map = new HashMap<>();
+//        map.put("name", "姓名");
+//        map.put("age", "年龄");
+//        map.put("score", "分数");
+//        map.put("isPass", "是否通过");
+//
+//
+//        List<String> row1 = CollUtil.newArrayList("aa", "bb", "cc", "dd");
+//        List<String> row2 = CollUtil.newArrayList("aa1", "bb1", "cc1", "dd1");
+//        List<String> row3 = CollUtil.newArrayList("aa2", "bb2", "cc2", "dd2");
+//        List<String> row4 = CollUtil.newArrayList("aa3", "bb3", "cc3", "dd3");
+//        List<String> row5 = CollUtil.newArrayList("aa4", "bb4", "cc4", "dd4");
+//
+//
+//        List<List<String>> rows = CollUtil.newArrayList(row1, row2, row3, row4, row5);
+        // 一次性写出内容，使用默认样式
+//        writer.setHeaderAlias(map);
+//        writer.write(rows);
+        // 关闭writer，释放内存
+//        writer.close();
+
+
+
+        Map<String, Object> row11 = new LinkedHashMap<>();
+        row11.put("姓名", "张三");
+        row11.put("年龄", 23);
+        row11.put("成绩", 88.32);
+        row11.put("是否合格", true);
+        row11.put("考试日期", "321");
+
+        Map<String, Object> row22 = new LinkedHashMap<>();
+        row22.put("姓名", "李四");
+        row22.put("年龄", 33);
+        row22.put("成绩", 59.50);
+        row22.put("是否合格", false);
+        row22.put("考试日期", "123");
+
+        ArrayList<Map<String, Object>> rows = CollUtil.newArrayList(row11, row22);
+
+        writer.write(rows);
+        writer.close();
+    }
 }
