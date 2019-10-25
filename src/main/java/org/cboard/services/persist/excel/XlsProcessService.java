@@ -307,7 +307,7 @@ public class XlsProcessService {
         tStyle.setShrinkToFit(true);
         return tStyle;
     }
-    private CellStyle createTStyleXlsx(BigExcelWriter writer) {
+    private CellStyle createTStyleXlsx(ExcelWriter writer) {
         CellStyle tStyle = writer.getCellStyle();
         tStyle.setBorderBottom(BorderStyle.THIN);
         tStyle.setBottomBorderColor(IndexedColors.GREY_25_PERCENT.getIndex());
@@ -346,15 +346,21 @@ public class XlsProcessService {
             List<JSONObject> titleMap = new ArrayList<>();
 
             JSONArray arr = (JSONArray) dataList.get(i);
+            Sheet sheet = writer.getSheet();
             for(int j = 0; j < arr.size(); j++) {
                 JSONObject obj = arr.getJSONObject(j);
                 String property = obj.getString("property");
                 Object data = obj.get("data");
 
+
+                sheet.setColumnWidth(j,(short)(18 *256));
                 switch (property) {
                     case "header_key" :
+                        titleMap.add(obj);
+                        break;
                     case "header_empty" :
                         titleMap.add(obj);
+                        break;
                     case "column_key" :
                     default:
                         cell.add(data);
@@ -363,19 +369,20 @@ public class XlsProcessService {
 
             }
             if(!titleMap.isEmpty()) {
+                writer.writeHeadRow(titleMap.stream().map(d-> ((JSONObject)d).getString("data")).collect(Collectors.toList()));
                 titleList.add(titleMap);
             }
-            //总数据
-            rows.add(cell);
+            if(!cell.isEmpty()){
+                //总数据
+                rows.add(cell);
+            }
         }
-        writer.write(rows);
 
+        writer.write(rows);
 
         //处理合并
         for(int i = 0; i < titleList.size() ; i++) {
             List<JSONObject> titleMap = titleList.get(i);
-
-            List<Map<String,Integer>> ColumnIndex = new ArrayList<>();
 
             //存索引
             Map<String,Object> indexMap = new HashMap<>();
@@ -419,10 +426,41 @@ public class XlsProcessService {
             }
         }
 
+        CellStyle tStyle = writer.getCellStyle();
+        tStyle.setBorderBottom(BorderStyle.THIN);
+        tStyle.setBottomBorderColor(IndexedColors.GREY_25_PERCENT.getIndex());
+        tStyle.setBorderLeft(BorderStyle.THIN);
+        tStyle.setLeftBorderColor(IndexedColors.GREY_25_PERCENT.getIndex());
+        tStyle.setBorderRight(BorderStyle.THIN);
+        tStyle.setRightBorderColor(IndexedColors.GREY_25_PERCENT.getIndex());
+        tStyle.setBorderTop(BorderStyle.THIN);
+        tStyle.setTopBorderColor(IndexedColors.GREY_25_PERCENT.getIndex());
+        tStyle.setAlignment(HorizontalAlignment.CENTER);
+        tStyle.setVerticalAlignment(VerticalAlignment.CENTER);
 
-        //设置头样式
+        CellStyle thStyle = writer.getHeadCellStyle();
+        thStyle.setFillForegroundColor(IndexedColors.BLUE.getIndex());
+        thStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+        thStyle.setBorderBottom(BorderStyle.THIN);
+        thStyle.setBottomBorderColor(IndexedColors.BLUE_GREY.getIndex());
+        thStyle.setBorderLeft(BorderStyle.THIN);
+        thStyle.setLeftBorderColor(IndexedColors.BLUE_GREY.getIndex());
+        thStyle.setBorderRight(BorderStyle.THIN);
+        thStyle.setRightBorderColor(IndexedColors.BLUE_GREY.getIndex());
+        thStyle.setBorderTop(BorderStyle.THIN);
+        thStyle.setTopBorderColor(IndexedColors.BLUE_GREY.getIndex());
+        thStyle.setAlignment(HorizontalAlignment.CENTER);
+        thStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+        Font font = writer.createFont();
+        font.setFontHeightInPoints((short) 12);
+        font.setColor(IndexedColors.WHITE.getIndex());
+        font.setFontName("微软雅黑");
+        thStyle.setFont(font);
+
+
+//
+////        设置头样式
 //        for(int i = 0; i < titleList.size() ; i++) {
-//            Row row = writer.getOrCreateRow(i);
 //            CellStyle rowStyle = row.getRowStyle();
 //            rowStyle.setFillBackgroundColor(IndexedColors.BLUE.getIndex());
 //            Font font = writer.createFont();

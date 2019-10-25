@@ -406,7 +406,9 @@ var crossTable = {
                 var blob = new Blob([this.response], {type: "application/vnd.ms-excel"});
                 var objectUrl = URL.createObjectURL(blob);
                 var aForExcel = $("<a><span class='forExcel'>下载excel</span></a>").attr("href", objectUrl);
-                aForExcel.attr("download", "table.xls");
+                var name =$(".toolbar" + random + " .exportBnt").parent().parent().prev().children()[0].innerHTML;
+                var date = new Date();
+                aForExcel.attr("download", name + date.toLocaleTimeString()+".xlsx");
                 $("body").append(aForExcel);
                 $(".forExcel").click();
                 aForExcel.remove();
