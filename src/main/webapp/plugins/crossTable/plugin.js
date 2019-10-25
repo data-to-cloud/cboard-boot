@@ -408,7 +408,7 @@ var crossTable = {
                 var aForExcel = $("<a><span class='forExcel'>下载excel</span></a>").attr("href", objectUrl);
                 var name =$(".toolbar" + random + " .exportBnt").parent().parent().prev().children()[0].innerHTML;
                 var date = new Date();
-                aForExcel.attr("download", name + date.getFullYear() + "-" + date.getMonth() + "-" + date.getDay() + "-" + date.getTime() +".xlsx");
+                aForExcel.attr("download", name + date.getFullYear() + "-" + (date.getMonth()+1) + "-" + (date.getDate()+1) + "-" + date.getTime() +".xlsx");
                 $("body").append(aForExcel);
                 $(".forExcel").click();
                 aForExcel.remove();
