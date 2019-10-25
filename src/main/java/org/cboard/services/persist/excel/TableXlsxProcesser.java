@@ -1,9 +1,12 @@
 package org.cboard.services.persist.excel;
 
+import cn.hutool.poi.excel.BigExcelWriter;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import org.apache.poi.hssf.usermodel.HSSFClientAnchor;
-import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.ClientAnchor;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellRangeUtil;
 import org.apache.poi.xssf.usermodel.XSSFClientAnchor;
@@ -17,13 +20,13 @@ import java.util.stream.Collectors;
 /**
  * Created by yfyuan on 2017/2/15.
  */
-public class TableXlsProcesser extends XlsProcesser {
+public class TableXlsxProcesser extends XlsxProcesser {
 
     @Override
-    protected ClientAnchor drawContent(XlsProcesserContext context) {
+    protected BigExcelWriter drawContent(XlsxProcesserContext context) {
         JSONArray tData = context.getData().getJSONArray("data");
-        final ClientAnchor tAnchor = new
-                XSSFClientAnchor();
+        final ClientAnchor tAnchor = new XSSFClientAnchor();
+
         tAnchor.setCol1(context.getC1());
         tAnchor.setRow1(context.getR1());
         int colSpan = (context.getC2() - context.getC1()) / tData.getJSONArray(0).size();
@@ -89,49 +92,52 @@ public class TableXlsProcesser extends XlsProcesser {
                 tAnchor.setRow2(row.getRowNum());
             }
         }
+//
+//        String mergeKey = null;
+//        List<CellHelper> mergedList = new ArrayList<>();
+//        for (int col = columnHeaderCellIdx.size() - 1; col >= 0; col--) {
+//            for (int r = context.getR1(); r <= tAnchor.getRow2(); r++) {
+//                HCell hCell = new HCell(context, mergeRegion, context.getBoardSheet().getRow(r).getCell(columnHeaderCellIdx.get(col)));
+//                if (mergeKey != null) {
+//                    if (mergeKey.equals(hCell.getMergeKey())) {
+//                        mergedList.add(hCell);
+//                    } else {
+//                        mergeCellHelper(mergeRegion, mergedList);
+//                        mergedList = new ArrayList<>();
+//                        mergeKey = hCell.getMergeKey();
+//                        mergedList.add(hCell);
+//                    }
+//                } else {
+//                    mergeKey = hCell.getMergeKey();
+//                }
+//            }
+//        }
+//        mergeCellHelper(mergeRegion, mergedList);
+//        mergeKey = null;
+//        mergedList = new ArrayList<>();
+//        for (int row = rowHeader; row >= 0; row--) {
+//            for (int c = 0; c < columnDataCellIdx.size(); c++) {
+//                VCell vCell = new VCell(context, mergeRegion, context.getBoardSheet().getRow(context.getR1() + row).getCell(columnDataCellIdx.get(c)));
+//                if (mergeKey != null) {
+//                    if (mergeKey.equals(vCell.getMergeKey())) {
+//                        mergedList.add(vCell);
+//                    } else {
+//                        mergeCellHelper(mergeRegion, mergedList);
+//                        mergedList = new ArrayList<>();
+//                        mergeKey = vCell.getMergeKey();
+//                        mergedList.add(vCell);
+//                    }
+//                } else {
+//                    mergeKey = vCell.getMergeKey();
+//                }
+//            }
+//        }
+//        mergeCellHelper(mergeRegion, mergedList);
+//        mergeRegion.stream().filter(e -> e.getFirstColumn() != e.getLastColumn() || e.getFirstRow() != e.getLastRow()).forEach(e -> context.getBoardSheet().addMergedRegion(e));
 
-        String mergeKey = null;
-        List<CellHelper> mergedList = new ArrayList<>();
-        for (int col = columnHeaderCellIdx.size() - 1; col >= 0; col--) {
-            for (int r = context.getR1(); r <= tAnchor.getRow2(); r++) {
-                HCell hCell = new HCell(context, mergeRegion, context.getBoardSheet().getRow(r).getCell(columnHeaderCellIdx.get(col)));
-                if (mergeKey != null) {
-                    if (mergeKey.equals(hCell.getMergeKey())) {
-                        mergedList.add(hCell);
-                    } else {
-                        mergeCellHelper(mergeRegion, mergedList);
-                        mergedList = new ArrayList<>();
-                        mergeKey = hCell.getMergeKey();
-                        mergedList.add(hCell);
-                    }
-                } else {
-                    mergeKey = hCell.getMergeKey();
-                }
-            }
-        }
-        mergeCellHelper(mergeRegion, mergedList);
-        mergeKey = null;
-        mergedList = new ArrayList<>();
-        for (int row = rowHeader; row >= 0; row--) {
-            for (int c = 0; c < columnDataCellIdx.size(); c++) {
-                VCell vCell = new VCell(context, mergeRegion, context.getBoardSheet().getRow(context.getR1() + row).getCell(columnDataCellIdx.get(c)));
-                if (mergeKey != null) {
-                    if (mergeKey.equals(vCell.getMergeKey())) {
-                        mergedList.add(vCell);
-                    } else {
-                        mergeCellHelper(mergeRegion, mergedList);
-                        mergedList = new ArrayList<>();
-                        mergeKey = vCell.getMergeKey();
-                        mergedList.add(vCell);
-                    }
-                } else {
-                    mergeKey = vCell.getMergeKey();
-                }
-            }
-        }
-        mergeCellHelper(mergeRegion, mergedList);
-        mergeRegion.stream().filter(e -> e.getFirstColumn() != e.getLastColumn() || e.getFirstRow() != e.getLastRow()).forEach(e -> context.getBoardSheet().addMergedRegion(e));
-        return tAnchor;
+        BigExcelWriter writer = context.getWb();
+        Sheet sheet = writer.getSheet();
+        return writer;
     }
 
     private void mergeCellHelper(List<CellRangeAddress> mergeRegion, List<CellHelper> mergeList) {
@@ -151,7 +157,7 @@ public class TableXlsProcesser extends XlsProcesser {
         private CellRangeAddress mergedCell;
         private String mergeKey;
 
-        public CellHelper(XlsProcesserContext context, List<CellRangeAddress> mergeRegion, Cell cell) {
+        public CellHelper(XlsxProcesserContext context, List<CellRangeAddress> mergeRegion, Cell cell) {
             Optional<CellRangeAddress> r = mergeRegion.stream().filter(c -> c.isInRange(cell.getRowIndex(), cell.getColumnIndex())).findFirst();
             CellRangeAddress _c = r.get();
             this.cell = cell;
@@ -160,7 +166,7 @@ public class TableXlsProcesser extends XlsProcesser {
             parseMergeKey(context, cell);
         }
 
-        protected abstract void parseMergeKey(XlsProcesserContext context, Cell cell);
+        protected abstract void parseMergeKey(XlsxProcesserContext context, Cell cell);
 
         public String getMergeKey() {
             return mergeKey;
@@ -181,12 +187,12 @@ public class TableXlsProcesser extends XlsProcesser {
 
     private class HCell extends CellHelper {
 
-        public HCell(XlsProcesserContext context, List<CellRangeAddress> mergeRegion, Cell cell) {
+        public HCell(XlsxProcesserContext context, List<CellRangeAddress> mergeRegion, Cell cell) {
             super(context, mergeRegion, cell);
         }
 
         @Override
-        protected void parseMergeKey(XlsProcesserContext context, Cell cell) {
+        protected void parseMergeKey(XlsxProcesserContext context, Cell cell) {
             StringBuilder sb = new StringBuilder();
             for (int c = cell.getColumnIndex(); c >= context.getC1(); c--) {
                 Cell _cell = context.getBoardSheet().getRow(cell.getRowIndex()).getCell(c);
@@ -201,12 +207,12 @@ public class TableXlsProcesser extends XlsProcesser {
 
     private class VCell extends CellHelper {
 
-        public VCell(XlsProcesserContext context, List<CellRangeAddress> mergeRegion, Cell cell) {
+        public VCell(XlsxProcesserContext context, List<CellRangeAddress> mergeRegion, Cell cell) {
             super(context, mergeRegion, cell);
         }
 
         @Override
-        protected void parseMergeKey(XlsProcesserContext context, Cell cell) {
+        protected void parseMergeKey(XlsxProcesserContext context, Cell cell) {
             StringBuilder sb = new StringBuilder();
             for (int r = cell.getRowIndex(); r >= context.getR1(); r--) {
                 Cell _cell = context.getBoardSheet().getRow(r).getCell(cell.getColumnIndex());

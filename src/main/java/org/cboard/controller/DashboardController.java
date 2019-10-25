@@ -1,5 +1,9 @@
 package org.cboard.controller;
 
+import cn.hutool.poi.excel.BigExcelWriter;
+import cn.hutool.poi.excel.ExcelUtil;
+import cn.hutool.poi.excel.ExcelWriter;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Charsets;
 import com.google.common.base.Functions;
@@ -8,6 +12,7 @@ import com.google.common.collect.Maps;
 import com.google.common.hash.Hashing;
 import org.apache.commons.io.IOUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.*;
 import org.cboard.dao.*;
 import org.cboard.dataprovider.DataProviderManager;
 import org.cboard.dataprovider.DataProviderViewManager;
@@ -27,6 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayOutputStream;
@@ -383,19 +389,44 @@ public class DashboardController extends BaseController {
     }
 
     @RequestMapping(value = "/tableToxls")
-    public ResponseEntity<byte[]> tableToxls(@RequestParam(name = "data") String data) {
-        HSSFWorkbook wb = xlsProcessService.tableToxls(JSONObject.parseObject(data));
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        try {
-            wb.write(out);
+    public ResponseEntity<byte[]> tableToxls(@RequestParam(name = "data") String data, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        List<Object> dataList = JSONObject.parseObject(data).getJSONArray("data");
+        int size = dataList.size();
+
+//        HSSFWorkbook wb = xlsProcessService.tableToxls(JSONObject.parseObject(data));
+//        if(size < 10000) {
+//            HSSFWorkbook wb = xlsProcessService.tableToxls(JSONObject.parseObject(data));
+//            ByteArrayOutputStream out = new ByteArrayOutputStream();
+//            try {
+//                wb.write(out);
+//                HttpHeaders headers = new HttpHeaders();
+//                headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+//                headers.setContentDispositionFormData("attachment", "table.xls");
+//                return new ResponseEntity<>(out.toByteArray(), headers, HttpStatus.CREATED);
+//            } catch (IOException e) {
+//                LOG.error("", e);
+//            }
+//            return null;
+//        } else {
+//            BigExcelWriter writer = ExcelUtil.getBigWriter("./table.xlsx");
+
+            ExcelWriter writer = ExcelUtil.getBigWriter();
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+            xlsProcessService.data2list(writer,JSONObject.parseObject(data));
+//            writer.write(dataList);
+
+//        writer.write(rows);
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-            headers.setContentDispositionFormData("attachment", "table.xls");
+            headers.setContentDispositionFormData("attachment", "table.xlsx");
+            writer.flush(out);
             return new ResponseEntity<>(out.toByteArray(), headers, HttpStatus.CREATED);
-        } catch (IOException e) {
-            LOG.error("", e);
-        }
-        return null;
+//        }
+
+
     }
 
     @RequestMapping(value = "/getJobStatus")
