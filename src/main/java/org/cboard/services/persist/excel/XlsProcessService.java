@@ -426,36 +426,9 @@ public class XlsProcessService {
             }
         }
 
-        CellStyle tStyle = writer.getCellStyle();
-        tStyle.setBorderBottom(BorderStyle.THIN);
-        tStyle.setBottomBorderColor(IndexedColors.GREY_25_PERCENT.getIndex());
-        tStyle.setBorderLeft(BorderStyle.THIN);
-        tStyle.setLeftBorderColor(IndexedColors.GREY_25_PERCENT.getIndex());
-        tStyle.setBorderRight(BorderStyle.THIN);
-        tStyle.setRightBorderColor(IndexedColors.GREY_25_PERCENT.getIndex());
-        tStyle.setBorderTop(BorderStyle.THIN);
-        tStyle.setTopBorderColor(IndexedColors.GREY_25_PERCENT.getIndex());
-        tStyle.setAlignment(HorizontalAlignment.CENTER);
-        tStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+        setCellStyle(writer);
 
-        CellStyle thStyle = writer.getHeadCellStyle();
-        thStyle.setFillForegroundColor(IndexedColors.BLUE.getIndex());
-        thStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-        thStyle.setBorderBottom(BorderStyle.THIN);
-        thStyle.setBottomBorderColor(IndexedColors.BLUE_GREY.getIndex());
-        thStyle.setBorderLeft(BorderStyle.THIN);
-        thStyle.setLeftBorderColor(IndexedColors.BLUE_GREY.getIndex());
-        thStyle.setBorderRight(BorderStyle.THIN);
-        thStyle.setRightBorderColor(IndexedColors.BLUE_GREY.getIndex());
-        thStyle.setBorderTop(BorderStyle.THIN);
-        thStyle.setTopBorderColor(IndexedColors.BLUE_GREY.getIndex());
-        thStyle.setAlignment(HorizontalAlignment.CENTER);
-        thStyle.setVerticalAlignment(VerticalAlignment.CENTER);
-        Font font = writer.createFont();
-        font.setFontHeightInPoints((short) 12);
-        font.setColor(IndexedColors.WHITE.getIndex());
-        font.setFontName("微软雅黑");
-        thStyle.setFont(font);
+        setHeadCellStyle(writer);
 
 
 //
@@ -490,6 +463,41 @@ public class XlsProcessService {
 
         System.out.println("成功");
 
+    }
+
+    private void setHeadCellStyle(ExcelWriter writer) {
+        CellStyle thStyle = writer.getHeadCellStyle();
+        thStyle.setFillForegroundColor(IndexedColors.BLUE.getIndex());
+        thStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+        thStyle.setBorderBottom(BorderStyle.THIN);
+        thStyle.setBottomBorderColor(IndexedColors.BLUE_GREY.getIndex());
+        thStyle.setBorderLeft(BorderStyle.THIN);
+        thStyle.setLeftBorderColor(IndexedColors.BLUE_GREY.getIndex());
+        thStyle.setBorderRight(BorderStyle.THIN);
+        thStyle.setRightBorderColor(IndexedColors.BLUE_GREY.getIndex());
+        thStyle.setBorderTop(BorderStyle.THIN);
+        thStyle.setTopBorderColor(IndexedColors.BLUE_GREY.getIndex());
+        thStyle.setAlignment(HorizontalAlignment.CENTER);
+        thStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+        Font font = writer.createFont();
+        font.setFontHeightInPoints((short) 12);
+        font.setColor(IndexedColors.WHITE.getIndex());
+        font.setFontName("微软雅黑");
+        thStyle.setFont(font);
+    }
+
+    private void setCellStyle(ExcelWriter writer) {
+        CellStyle tStyle = writer.getCellStyle();
+        tStyle.setBorderBottom(BorderStyle.THIN);
+        tStyle.setBottomBorderColor(IndexedColors.GREY_25_PERCENT.getIndex());
+        tStyle.setBorderLeft(BorderStyle.THIN);
+        tStyle.setLeftBorderColor(IndexedColors.GREY_25_PERCENT.getIndex());
+        tStyle.setBorderRight(BorderStyle.THIN);
+        tStyle.setRightBorderColor(IndexedColors.GREY_25_PERCENT.getIndex());
+        tStyle.setBorderTop(BorderStyle.THIN);
+        tStyle.setTopBorderColor(IndexedColors.GREY_25_PERCENT.getIndex());
+        tStyle.setAlignment(HorizontalAlignment.CENTER);
+        tStyle.setVerticalAlignment(VerticalAlignment.CENTER);
     }
 
 
