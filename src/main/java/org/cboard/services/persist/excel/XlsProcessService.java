@@ -421,6 +421,9 @@ public class XlsProcessService {
                     }else {
 
                     }
+                    result.remove(indexMap.get("flag"));
+
+
                 }
                 indexMap.put("flag",data); //合并标志
             }
