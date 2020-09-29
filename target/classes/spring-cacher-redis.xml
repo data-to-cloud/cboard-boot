@@ -11,6 +11,7 @@
                     <bean class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory"
                           p:hostName="${cache.redis.hostName}"
                           p:port="${cache.redis.port}"
+                          p:password="${cache.redis.password}"
                           p:usePool="true"/>
                 </property>
                 <property name="keySerializer">
