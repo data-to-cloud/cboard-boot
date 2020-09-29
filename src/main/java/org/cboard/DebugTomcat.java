@@ -15,7 +15,7 @@ public class DebugTomcat {
 
     public static void main(String[] args) throws Exception {
 
-        int port = 7090;
+        int port = 8080;
         if (args.length >= 1) {
             port = Integer.parseInt(args[0]);
         }
