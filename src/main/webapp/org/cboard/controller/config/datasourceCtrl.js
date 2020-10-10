@@ -10,9 +10,9 @@ cBoard.controller('datasourceCtrl', function ($scope, $state, $stateParams, $htt
     $scope.alerts = [];
     $scope.verify = {dsName:true,provider:true};
     $scope.params = [];
-    
+
     var getDatasourceList = function () {
-        $http.get("dashboard/getDatasourceList.do").success(function (response) {
+        $http.get("dashboard/getDatasourceList").success(function (response) {
             $scope.datasourceList = response;
             if ($stateParams.id) {
                 $scope.editDs(_.find($scope.datasourceList, function (dsr) {
@@ -24,7 +24,7 @@ cBoard.controller('datasourceCtrl', function ($scope, $state, $stateParams, $htt
 
     getDatasourceList();
 
-    $http.get("dashboard/getProviderList.do").success(function (response) {
+    $http.get("dashboard/getProviderList").success(function (response) {
         $scope.providerList = response;
     });
 
@@ -44,7 +44,7 @@ cBoard.controller('datasourceCtrl', function ($scope, $state, $stateParams, $htt
         // var isDependent = false;
         var resDs = [];
         var resWdg = [];
-        var promiseDs = $http.get("dashboard/getAllDatasetList.do").then(function (response) {
+        var promiseDs = $http.get("dashboard/getAllDatasetList").then(function (response) {
             if (!response) {
                 return false;
             }
@@ -56,7 +56,7 @@ cBoard.controller('datasourceCtrl', function ($scope, $state, $stateParams, $htt
             }
         });
 
-        var promiseWdg = $http.get("dashboard/getAllWidgetList.do").then(function (response) {
+        var promiseWdg = $http.get("dashboard/getAllWidgetList").then(function (response) {
             if (!response) {
                 return false;
             }
@@ -82,7 +82,7 @@ cBoard.controller('datasourceCtrl', function ($scope, $state, $stateParams, $htt
                 return false;
             }
             ModalUtils.confirm(translate("COMMON.CONFIRM_DELETE"), "modal-warning", "lg", function () {
-                $http.post("dashboard/deleteDatasource.do", {id: ds.id}).success(function (serviceStatus) {
+                $http.post("dashboard/deleteDatasource", {id: ds.id}).success(function (serviceStatus) {
                     if (serviceStatus.status == '1') {
                         getDatasourceList();
                     } else {
@@ -97,7 +97,7 @@ cBoard.controller('datasourceCtrl', function ($scope, $state, $stateParams, $htt
     $scope.copyDs = function (ds) {
         var data = angular.copy(ds);
         data.name = data.name + "_copy";
-        $http.post("dashboard/saveNewDatasource.do", {json: angular.toJson(data)}).success(function (serviceStatus) {
+        $http.post("dashboard/saveNewDatasource", {json: angular.toJson(data)}).success(function (serviceStatus) {
             if (serviceStatus.status == '1') {
                 $scope.optFlag = 'none';
                 getDatasourceList();
@@ -111,11 +111,11 @@ cBoard.controller('datasourceCtrl', function ($scope, $state, $stateParams, $htt
         ModalUtils.info(ds,"modal-info", "lg");
     };
     $scope.changeDsView = function () {
-        $scope.dsView = 'dashboard/getDatasourceView.do?type=' + $scope.curDatasource.type;
+        $scope.dsView = 'dashboard/getDatasourceView?type=' + $scope.curDatasource.type;
     };
 
     $scope.doDatasourceParams = function () {
-        $http.get('dashboard/getDatasourceParams.do?type=' + $scope.curDatasource.type).then(function (response) {
+        $http.get('dashboard/getDatasourceParams?type=' + $scope.curDatasource.type).then(function (response) {
             $scope.params = response.data;
         });
     };
@@ -123,7 +123,7 @@ cBoard.controller('datasourceCtrl', function ($scope, $state, $stateParams, $htt
     $scope.changeDs = function () {
         $scope.changeDsView();
         $scope.curDatasource.config = {};
-        $http.get('dashboard/getDatasourceParams.do?type=' + $scope.curDatasource.type).then(function (response) {
+        $http.get('dashboard/getDatasourceParams?type=' + $scope.curDatasource.type).then(function (response) {
             $scope.params = response.data;
             for(i in $scope.params){
                 var name = $scope.params[i].name;
@@ -140,7 +140,7 @@ cBoard.controller('datasourceCtrl', function ($scope, $state, $stateParams, $htt
             }
         });
     };
-    
+
     var validate = function () {
         $scope.alerts = [];
         if($scope.curDatasource.type == null){
@@ -178,7 +178,7 @@ cBoard.controller('datasourceCtrl', function ($scope, $state, $stateParams, $htt
         if(!validate()){
             return;
         }
-        $http.post("dashboard/saveNewDatasource.do", {json: angular.toJson($scope.curDatasource)}).success(function (serviceStatus) {
+        $http.post("dashboard/saveNewDatasource", {json: angular.toJson($scope.curDatasource)}).success(function (serviceStatus) {
             if (serviceStatus.status == '1') {
                 $scope.optFlag = 'none';
                 getDatasourceList();
@@ -194,7 +194,7 @@ cBoard.controller('datasourceCtrl', function ($scope, $state, $stateParams, $htt
         if(!validate()){
             return;
         }
-        $http.post("dashboard/updateDatasource.do", {json: angular.toJson($scope.curDatasource)}).success(function (serviceStatus) {
+        $http.post("dashboard/updateDatasource", {json: angular.toJson($scope.curDatasource)}).success(function (serviceStatus) {
             if (serviceStatus.status == '1') {
                 $scope.optFlag = 'none';
                 getDatasourceList();
@@ -220,7 +220,7 @@ cBoard.controller('datasourceCtrl', function ($scope, $state, $stateParams, $htt
                     $uibModalInstance.close();
                 };
                 $scope.curWidget = {query: {}};
-                $http.get('dashboard/getConfigParams.do?type=' + $scope.datasource.type + '&page=test.html').then(function (response) {
+                $http.get('dashboard/getConfigParams?type=' + $scope.datasource.type + '&page=test.html').then(function (response) {
                     $scope.params = response.data;
                     for(i in $scope.params){
                         var name = $scope.params[i].name;
@@ -259,7 +259,7 @@ cBoard.controller('datasourceCtrl', function ($scope, $state, $stateParams, $htt
                     if (!validate()) {
                         return;
                     }
-                    $http.post("dashboard/test.do", {
+                    $http.post("dashboard/test", {
                         datasource: angular.toJson($scope.datasource),
                         query: angular.toJson($scope.curWidget.query)
                     }).success(function (result) {

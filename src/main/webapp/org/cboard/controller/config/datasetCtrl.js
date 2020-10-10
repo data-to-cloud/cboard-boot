@@ -27,7 +27,7 @@ cBoard.controller('datasetCtrl', function ($scope, $http, $state, $stateParams, 
 
     var treeID = 'dataSetTreeID'; // Set to a same value with treeDom
     var originalData = [];
-    var updateUrl = "dashboard/updateDataset.do";
+    var updateUrl = "dashboard/updateDataset";
 
     var trash = {};
 
@@ -61,12 +61,12 @@ cBoard.controller('datasetCtrl', function ($scope, $http, $state, $stateParams, 
         }
     };
 
-    $http.get("dashboard/getDatasourceList.do").success(function (response) {
+    $http.get("dashboard/getDatasourceList").success(function (response) {
         $scope.datasourceList = response;
     });
 
     var getDatasetList = function () {
-        $http.get("dashboard/getDatasetList.do").success(function (response) {
+        $http.get("dashboard/getDatasetList").success(function (response) {
             $scope.datasetList = response;
             $scope.searchNode();
             if ($stateParams.id) {
@@ -78,7 +78,7 @@ cBoard.controller('datasetCtrl', function ($scope, $http, $state, $stateParams, 
     };
 
     var getCategoryList = function () {
-        $http.get("dashboard/getDatasetCategoryList.do").success(function (response) {
+        $http.get("dashboard/getDatasetCategoryList").success(function (response) {
             $scope.categoryList = response;
             $("#DatasetName").autocomplete({
                 source: $scope.categoryList
@@ -107,7 +107,7 @@ cBoard.controller('datasetCtrl', function ($scope, $http, $state, $stateParams, 
     };
 
     $scope.editDs = function (ds) {
-        $http.post("dashboard/checkDatasource.do", {
+        $http.post("dashboard/checkDatasource", {
             id: ds.data.datasource
         }).success(function (response) {
             if (response.status == '1') {
@@ -164,7 +164,7 @@ cBoard.controller('datasetCtrl', function ($scope, $http, $state, $stateParams, 
     };
 
     $scope.deleteDs = function (ds) {
-        $http.get("dashboard/getAllWidgetList.do").then(function (response) {
+        $http.get("dashboard/getAllWidgetList").then(function (response) {
             if (!response) {
                 return false;
             }
@@ -182,7 +182,7 @@ cBoard.controller('datasetCtrl', function ($scope, $http, $state, $stateParams, 
                 return false;
             }
             ModalUtils.confirm(translate("COMMON.CONFIRM_DELETE"), "modal-warning", "lg", function () {
-                $http.post("dashboard/deleteDataset.do", {
+                $http.post("dashboard/deleteDataset", {
                     id: ds.id
                 }).success(function (serviceStatus) {
                     if (serviceStatus.status == '1') {
@@ -199,7 +199,7 @@ cBoard.controller('datasetCtrl', function ($scope, $http, $state, $stateParams, 
     $scope.copyDs = function (ds) {
         var data = angular.copy(ds);
         data.name = data.name + "_copy";
-        $http.post("dashboard/saveNewDataset.do", {
+        $http.post("dashboard/saveNewDataset", {
             json: angular.toJson(data)
         }).success(function (serviceStatus) {
             if (serviceStatus.status == '1') {
@@ -264,7 +264,7 @@ cBoard.controller('datasetCtrl', function ($scope, $http, $state, $stateParams, 
         }
 
         if ($scope.optFlag == 'new') {
-            $http.post("dashboard/saveNewDataset.do", {
+            $http.post("dashboard/saveNewDataset", {
                 json: angular.toJson(ds)
             }).success(function (serviceStatus) {
                 if (serviceStatus.status == '1') {
@@ -728,7 +728,7 @@ cBoard.controller('datasetCtrl', function ($scope, $http, $state, $stateParams, 
     }();
 
     $scope.doConfigParams = function () {
-        $http.get('dashboard/getConfigParams.do', {
+        $http.get('dashboard/getConfigParams', {
             params: {
                 type: $scope.datasource.type,
                 datasourceId: $scope.datasource.id,
@@ -741,7 +741,7 @@ cBoard.controller('datasetCtrl', function ($scope, $http, $state, $stateParams, 
 
     $scope.changeDs = function () {
         $scope.curWidget.query = {};
-        $http.get('dashboard/getConfigParams.do', {
+        $http.get('dashboard/getConfigParams', {
             params: {
                 type: $scope.datasource.type,
                 datasourceId: $scope.datasource.id,

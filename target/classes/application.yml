@@ -1,0 +1,106 @@
+server:
+  port: 8080
+  undertow:
+    buffer-size: 1024000
+    direct-buffers: true
+    io-threads: 64
+    worker-threads: 512
+spring:
+  datasource:
+    password: 123456
+    type: com.alibaba.druid.pool.DruidDataSource
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/cboard?characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
+    username: root
+  druid:
+    initialSize: 5 #初始化连接大小
+    minIdle: 0     #最小连接池数量
+    maxActive: 20  #最大连接池数量
+    maxWait: 60000 #获取连接时最大等待时间，单位毫秒
+    timeBetweenEvictionRunsMillis: 60000 #配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
+    minEvictableIdleTimeMillis: 300000   #配置一个连接在池中最小生存的时间，单位是毫秒
+    validationQuery: SELECT 1 #测试连接
+    testWhileIdle: true                  #申请连接的时候检测，建议配置为true，不影响性能，并且保证安全性
+    testOnBorrow: false                  #获取连接时执行检测，建议关闭，影响性能
+    testOnReturn: false                  #归还连接时执行检测，建议关闭，影响性能
+    poolPreparedStatements: false       #是否开启PSCache，PSCache对支持游标的数据库性能提升巨大，oracle建议开启，mysql下建议关闭
+    maxPoolPreparedStatementPerConnectionSize: 20 #开启poolPreparedStatements后生效
+    removeAbandoned: true
+    removeAbandonedTimeout: 1800
+    logAbandoned: true
+    filters: mergeStat,log4j,wall #配置扩展插件，常用的插件有=>stat:监控统计  log4j:日志  wall:防御sql注入
+    connectionProperties: 'druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000'
+  application:
+    name: cboard
+  redis:
+    database: 1
+    timeout: 5000
+    host: 127.0.0.01
+    port: 6379
+    #password: a123456
+    lettuce:
+      pool:
+        max-active: 8
+        max-wait: -1
+        max-idle: 8
+        min-idle: 0
+  main:
+    allow-bean-definition-overriding: true
+  servlet:
+    multipart:
+      max-file-size: 200MB
+      max-request-size: 1000MB
+  mvc:
+    static-path-pattern: /**
+  resources:
+    static-locations: file:./webapp/,classpath:/META-INF/resources/,classpath:/webapp/,classpath:/resources/,classpath:/static/
+
+#mybatis的相关配置
+mybatis:
+  #mapper配置文件
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: org.cboard.pojo
+  #开启驼峰命名
+  configuration:
+    variables: admin_user_id
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+
+# Service configuration
+dataprovider:
+  resultLimit: 1000000
+phantomjs_path: /Users/yqwoe/tools/phantomjs-2.1.1-macosx/bin/phantomjs
+
+admin_user_id: 1
+aggregator:
+  h2:
+    database:
+      name: cboard
+    cleanjob:
+      quarz: 0 1 0 * * ?
+    url: jdbc:h2:~/H2Data/cboard;AUTO_SERVER=TRUE;LOG=0;UNDO_LOG=0
+
+mail:
+  smtp:
+    host: 127.0.0.1
+    port: 8825
+    from: test@test.com
+
+log:
+  negativeFilter: List
+  positveFilter:
+
+caso:
+  client:
+    url: http://localhost:8026
+    check: ${caso.client.url}/login/cas
+  server:
+    url: http://your-casserver-ip/caso
+    login: ${caso.server.url}/login
+    logout: ${caso.server.url}/logout?service=${caso.client.url}
+
+logging:
+  level:
+    mapper: debug
+    org: debug
+

@@ -206,7 +206,7 @@ public class DashboardController extends BaseController {
     }
 
     @RequestMapping(value = "/getBoardData")
-    public ViewDashboardBoard getBoardData(@RequestParam(name = "id") Long id) {
+    public ViewDashboardBoard getBoardData(@RequestParam(name = "id",required = false,defaultValue = "-1") Long id) {
         return boardService.getBoardData(id);
     }
 

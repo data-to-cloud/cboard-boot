@@ -28,7 +28,7 @@ public interface UserDao {
 
     DashboardUser getUserByLoginName(String loginName);
 
-    int saveNewUser(String userId, String user_name, String loginName);
+    int saveNewUser(String userId, String userName, String loginName);
 
     int updateUserPassword(String userId, String passowrd, String newPassword);
 

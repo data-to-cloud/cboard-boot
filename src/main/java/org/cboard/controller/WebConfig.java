@@ -13,11 +13,10 @@ import java.nio.charset.Charset;
 import java.util.Iterator;
 import java.util.List;
 
-@Configuration
-@EnableWebMvc
-@ComponentScan(basePackages = {"org.cboard.controller"})
-@PropertySource(value = {"classpath:config.properties"})
-@EnableAspectJAutoProxy(proxyTargetClass = true)
+//@Configuration
+//@EnableWebMvc
+//@ComponentScan(basePackages = {"org.cboard.controller"})
+//@PropertySource(value = {"classpath:config.properties"})
 public class WebConfig extends WebMvcConfigurerAdapter {
 
     @Bean

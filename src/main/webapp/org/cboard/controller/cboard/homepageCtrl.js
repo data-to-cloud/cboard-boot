@@ -8,7 +8,7 @@ cBoard.controller('homepageCtrl', function ($rootScope, $scope, $state, $http, $
     var originalData = [];
 
     var getDatasetList = function () {
-        $http.get("dashboard/getDatasetList.do").success(function (response) {
+        $http.get("dashboard/getDatasetList").success(function (response) {
             $scope.datasetList = response;
             $scope.searchNode();
         });

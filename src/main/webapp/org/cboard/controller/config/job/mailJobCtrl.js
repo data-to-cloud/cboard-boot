@@ -13,7 +13,7 @@ cBoard.controller('mailJobCtrl', function ($scope, $uibModalInstance, $http, $fi
         }
     }();
     var getBoardList = function () {
-        $http.get("dashboard/getBoardList.do").success(function (response) {
+        $http.get("dashboard/getBoardList").success(function (response) {
             $scope.boardList = response;
         });
     }();

@@ -111,7 +111,7 @@ cBoard.controller('paramCtrl', function ($scope, $uibModal, $http) {
                 } else {
                     p = {datasourceId: null, query: null, datasetId: c.datasetId};
                 }
-                $http.post("dashboard/getDimensionValues.do", {
+                $http.post("dashboard/getDimensionValues", {
                     datasourceId: p.datasourceId,
                     query: p.query,
                     datasetId: p.datasetId,

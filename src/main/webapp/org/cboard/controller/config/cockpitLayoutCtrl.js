@@ -240,7 +240,7 @@ cBoard.controller('cockpitLayoutCtrl', function ($stateParams, $state, chartServ
                 event.preventDefault();
                 var fileList = event.dataTransfer.files; //获取文件对象
                 var xhr = new XMLHttpRequest();
-                var url = 'dashboard/uploadImage.do';
+                var url = 'dashboard/uploadImage';
                 xhr.open('post', url, true);
                 xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
                 xhr.onreadystatechange = function () {
@@ -261,7 +261,7 @@ cBoard.controller('cockpitLayoutCtrl', function ($stateParams, $state, chartServ
                     vm._data.viewType = true;
                 }
                 if (boardId) {
-                    vm.$http.get("dashboard/getBoardData.do", {params: {id: boardId}}).then(function (res) {
+                    vm.$http.get("dashboard/getBoardData", {params: {id: boardId}}).then(function (res) {
                         if (!res.data.layout.cockpitConf) {
                             return;
                         }
@@ -383,7 +383,7 @@ cBoard.controller('cockpitLayoutCtrl', function ($stateParams, $state, chartServ
         }
         //数据封装结束
         if ($stateParams.boardId) {
-            vm.$http.post("dashboard/updateBoard.do", {json: JSON.stringify(json)}, {emulateJSON: true}).then(function (res) {
+            vm.$http.post("dashboard/updateBoard", {json: JSON.stringify(json)}, {emulateJSON: true}).then(function (res) {
                 if (res.status == "200") {
                     closeMessage("提示", "更新成功", function () {
                         cockpitChartDataJSON = {};
@@ -403,7 +403,7 @@ cBoard.controller('cockpitLayoutCtrl', function ($stateParams, $state, chartServ
                 }
             });
         } else {
-            vm.$http.post("dashboard/saveNewBoard.do", {json: JSON.stringify(json)}, {emulateJSON: true}).then(function (res) {
+            vm.$http.post("dashboard/saveNewBoard", {json: JSON.stringify(json)}, {emulateJSON: true}).then(function (res) {
                 if (res.status == "200") {
                     closeMessage("提示", "保存成功", function () {
                         cockpitChartDataJSON = {};
@@ -601,7 +601,7 @@ cBoard.controller('cockpitLayoutCtrl', function ($stateParams, $state, chartServ
     }
 
     function getWidgetList() {
-        vm.$http.get("dashboard/getWidgetList.do").then(function (response) {
+        vm.$http.get("dashboard/getWidgetList").then(function (response) {
             var response = response.data;
             var map = {};
             for (var i = 0; i < response.length; i++) {
@@ -619,7 +619,7 @@ cBoard.controller('cockpitLayoutCtrl', function ($stateParams, $state, chartServ
     }
 
     var getBoardList = function () {
-        return vm.$http.get("dashboard/getBoardList.do").then(function (response) {
+        return vm.$http.get("dashboard/getBoardList").then(function (response) {
             var response = response.data;
             vm._data.boardList = response;
         });
@@ -639,7 +639,7 @@ cBoard.controller('cockpitLayoutCtrl', function ($stateParams, $state, chartServ
             init: function () {
                 var domId = this.chartdata.domId;
                 var widgetId = this.chartdata.widgetId;
-                vm.$http.get("dashboard/dashboardWidget.do", {
+                vm.$http.get("dashboard/dashboardWidget", {
                     params: {
                         "id": widgetId
                     }
@@ -673,7 +673,7 @@ cBoard.controller('cockpitLayoutCtrl', function ($stateParams, $state, chartServ
     };
 
     function getCategoryList() {
-        vm.$http.get("dashboard/getCategoryList.do").then(function (response) {
+        vm.$http.get("dashboard/getCategoryList").then(function (response) {
             var response = response.data;
             vm._data.categoryList.push({
                 name: "Private DashBoard",
@@ -690,7 +690,7 @@ cBoard.controller('cockpitLayoutCtrl', function ($stateParams, $state, chartServ
 
     var getDatasetList = function () {
         var deferred = $q.defer();
-        vm.$http.get("dashboard/getDatasetList.do").then(function (data) {
+        vm.$http.get("dashboard/getDatasetList").then(function (data) {
             var data = data.data;
             deferred.resolve(data);
         });

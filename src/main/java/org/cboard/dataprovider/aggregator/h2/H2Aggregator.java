@@ -34,6 +34,7 @@ public class H2Aggregator extends InnerAggregator {
     @Autowired
     @Qualifier("h2DataSource")
     private BasicDataSource jdbcDataSource;
+
     private static final String TBL_PREFIX = "TMP_";
     protected static Map<String, Long> h2AggMetaCacher = new HashMap<>();
 

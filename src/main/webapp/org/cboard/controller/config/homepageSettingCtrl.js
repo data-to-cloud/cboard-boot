@@ -16,10 +16,10 @@ cBoard.controller('homepageSettingCtrl',
 
         var treeID = "boardTreeID";
         var originalData = [];
-        var updateUrl = "dashboard/updateBoard.do";
+        var updateUrl = "dashboard/updateBoard";
 
         var getBoardList = function () {
-            return $http.get("dashboard/getBoardList.do").success(function (response) {
+            return $http.get("dashboard/getBoardList").success(function (response) {
                 $scope.boardList = response;
                 originalData = jstree_CvtVPath2TreeData(
                     $scope.boardList.map(function (ds) {
@@ -34,19 +34,19 @@ cBoard.controller('homepageSettingCtrl',
                 jstree_ReloadTree(treeID, originalData);
                 $timeout(function() {
                 	$('#saveHomepage').removeClass('disabled');
-                	$('#resetHomepage').removeClass('disabled');                	
-                	$scope.treeInstance.jstree(true).open_all();                	
-                	$http.get("homepage/selectHomepage.do").success(function (response) {
+                	$('#resetHomepage').removeClass('disabled');
+                	$scope.treeInstance.jstree(true).open_all();
+                	$http.get("homepage/selectHomepage").success(function (response) {
                 		if(response != null) {
                 			$("#"+response+"_anchor").css("font-weight","bold");
-                		}                		
+                		}
                      });
-                }, 500);                
+                }, 500);
             });
         };
 
         var getCategoryList = function () {
-            $http.get("dashboard/getCategoryList.do").success(function (response) {
+            $http.get("dashboard/getCategoryList").success(function (response) {
                 $scope.categoryList = [{id: null, name: translate('CONFIG.DASHBOARD.MY_DASHBOARD')}];
                 _.each(response, function (o) {
                     $scope.categoryList.push(o);
@@ -63,11 +63,11 @@ cBoard.controller('homepageSettingCtrl',
         $('#resetHomepage').addClass('disabled');
         var boardListPromise = getBoardList();
         getCategoryList();
-        
+
         $scope.resetHomepage = function () {
         	if(!$('#resetHomepage').hasClass('disabled')) {
         		ModalUtils.confirm(translate("COMMON.CONFIRM_RESET"), "modal-warning", "lg", function () {
-        			$http.post("homepage/resetHomepage.do", {}).success(function (serviceStatus) {
+        			$http.post("homepage/resetHomepage", {}).success(function (serviceStatus) {
                         if (serviceStatus.status == '1') {
                         	$(".jstree-anchor").css("font-weight", "");
                             ModalUtils.alert(translate("COMMON.SUCCESS"), "modal-success", "sm");
@@ -84,8 +84,8 @@ cBoard.controller('homepageSettingCtrl',
         		var board = getSelectedBoard();
             	if(board == null) {
             		ModalUtils.alert(translate("COMMON.MUST_SELECT_ONE_BOARD"), "modal-warning", "sm");
-            	} else {            		
-            		$http.post("homepage/saveHomepage.do", {
+            	} else {
+            		$http.post("homepage/saveHomepage", {
                         boardId: board.id,
                     }).success(function (serviceStatus) {
                         if (serviceStatus.status == '1') {
@@ -96,7 +96,7 @@ cBoard.controller('homepageSettingCtrl',
                         	ModalUtils.alert(translate("COMMON.FAIL"), "modal-danger", "sm");
                         }
                     });
-            	}       
+            	}
         	}
         };
 
@@ -119,5 +119,5 @@ cBoard.controller('homepageSettingCtrl',
                 return ds.id == selectedNode.id;
             });
         };
-        
+
     });

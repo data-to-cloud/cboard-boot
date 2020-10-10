@@ -16,10 +16,10 @@ cBoard.controller('boardCtrl',
 
         var treeID = "boardTreeID";
         var originalData = [];
-        var updateUrl = "dashboard/updateBoard.do";
+        var updateUrl = "dashboard/updateBoard";
 
         var getBoardList = function () {
-            return $http.get("dashboard/getBoardList.do").success(function (response) {
+            return $http.get("dashboard/getBoardList").success(function (response) {
                 $scope.boardList = response;
                 originalData = jstree_CvtVPath2TreeData(
                     $scope.boardList.map(function (ds) {
@@ -36,7 +36,7 @@ cBoard.controller('boardCtrl',
         };
 
         var getCategoryList = function () {
-            $http.get("dashboard/getCategoryList.do").success(function (response) {
+            $http.get("dashboard/getCategoryList").success(function (response) {
                 $scope.categoryList = [{id: null, name: translate('CONFIG.DASHBOARD.MY_DASHBOARD')}];
                 _.each(response, function (o) {
                     $scope.categoryList.push(o);
@@ -45,10 +45,10 @@ cBoard.controller('boardCtrl',
         };
 
         var getDatasetList = function () {
-            $http.get("dashboard/getDatasetList.do")
+            $http.get("dashboard/getDatasetList")
                 .then(function (response) {
                     $scope.datasetList = response.data;
-                    return $http.get("dashboard/getWidgetList.do");
+                    return $http.get("dashboard/getWidgetList");
                 })
                 .then(function (response) {
                         $scope.widgetList = response.data;
@@ -183,12 +183,12 @@ cBoard.controller('boardCtrl',
         $scope.copyBoard = function (board) {
             var o = angular.copy(board);
             o.name = o.name + '_copy';
-            $http.post("dashboard/saveNewBoard.do", {json: angular.toJson(o)}).success(saveBoardCallBack);
+            $http.post("dashboard/saveNewBoard", {json: angular.toJson(o)}).success(saveBoardCallBack);
         };
 
         $scope.deleteBoard = function (board) {
             ModalUtils.confirm(translate("COMMON.CONFIRM_DELETE"), "modal-warning", "lg", function () {
-                $http.post("dashboard/deleteBoard.do", {id: board.id}).success(function (serviceStatus) {
+                $http.post("dashboard/deleteBoard", {id: board.id}).success(function (serviceStatus) {
                     if (serviceStatus.status == '1') {
                         getBoardList();
                         boardChange();
@@ -244,7 +244,7 @@ cBoard.controller('boardCtrl',
                 delete widget.relations;
             }
         };
-        
+
         $scope.addExtenal = function (widget) {
         	widget.extenal = {};
         };
@@ -310,7 +310,7 @@ cBoard.controller('boardCtrl',
                 };
             }
             if ($scope.optFlag == 'new') {
-                return $http.post("dashboard/saveNewBoard.do", {json: angular.toJson($scope.curBoard)}).success(callBack);
+                return $http.post("dashboard/saveNewBoard", {json: angular.toJson($scope.curBoard)}).success(callBack);
             } else if ($scope.optFlag == 'edit') {
                 return $http.post(updateUrl, {json: angular.toJson($scope.curBoard)}).success(callBack);
             }
@@ -324,8 +324,8 @@ cBoard.controller('boardCtrl',
                     	if (!_.isUndefined(widget.extenal.name)) {
                     		if(_.isEqual(widget.extenal.name.replace(/\s+/g,""), '')) {
                     			delete widget.extenal.name;
-                        	}    
-                    	}                    	                	
+                        	}
+                    	}
                     }
                     if (!_.isUndefined(widget.relations)) {
                         delete widget.relations.sourceFields;
@@ -571,7 +571,7 @@ cBoard.controller('boardCtrl',
                 return;
             }
             //源表字段默认为原表的group key指定字段
-            $http.get("dashboard/dashboardWidget.do?id=" + e.widgetId).then(function (response) {
+            $http.get("dashboard/dashboardWidget?id=" + e.widgetId).then(function (response) {
                 if (!response) {
                     return false;
                 }

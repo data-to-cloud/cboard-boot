@@ -8,7 +8,7 @@ cBoard.controller('shareResCtrl', function ($scope, $http, ModalUtils, $filter) 
     $scope.userKeyword = '';
 
     var getRoleList = function () {
-        $http.get("admin/getRoleListAll.do").success(function (response) {
+        $http.get("admin/getRoleListAll").success(function (response) {
             $scope.roleList = response;
         });
     };
@@ -41,7 +41,7 @@ cBoard.controller('shareResCtrl', function ($scope, $http, ModalUtils, $filter) 
     }];
 
     var getBoardList = function () {
-        return $http.get("admin/getBoardListUser.do").success(function (response) {
+        return $http.get("admin/getBoardListUser").success(function (response) {
             _.each(buildNodeByCategory(_.filter(response, function (e) {
                 return e.categoryId;
             }), 'Dashboard', 'board', 'fa fa-puzzle-piece'), function (e) {
@@ -51,7 +51,7 @@ cBoard.controller('shareResCtrl', function ($scope, $http, ModalUtils, $filter) 
     };
 
     var getDatasetList = function () {
-        return $http.get("admin/getDatasetListUser.do").success(function (response) {
+        return $http.get("admin/getDatasetListUser").success(function (response) {
             _.each(buildNodeByCategory(response, 'Dataset', 'dataset', 'fa fa-table'), function (e) {
                 $scope.resList.push(e);
             });
@@ -59,7 +59,7 @@ cBoard.controller('shareResCtrl', function ($scope, $http, ModalUtils, $filter) 
     };
 
     var getWidgetList = function () {
-        return $http.get("admin/getWidgetListUser.do").success(function (response) {
+        return $http.get("admin/getWidgetListUser").success(function (response) {
             _.each(buildNodeByCategory(response, 'Widget', 'widget', 'fa fa-line-chart'), function (e) {
                 $scope.resList.push(e);
             });
@@ -146,7 +146,7 @@ cBoard.controller('shareResCtrl', function ($scope, $http, ModalUtils, $filter) 
 
 
     var getRoleResList = function () {
-        $http.get("admin/getRoleResList.do").success(function (response) {
+        $http.get("admin/getRoleResList").success(function (response) {
             $scope.roleResList = response;
         });
     };
@@ -165,7 +165,7 @@ cBoard.controller('shareResCtrl', function ($scope, $http, ModalUtils, $filter) 
                 resType: e.original.type,
             };
         });
-        $http.post("admin/updateRoleResUser.do", {
+        $http.post("admin/updateRoleResUser", {
             roleIdArr: angular.toJson(roleIds),
             resIdArr: angular.toJson(resIds),
         }).success(function (serviceStatus) {
@@ -199,7 +199,7 @@ cBoard.controller('shareResCtrl', function ($scope, $http, ModalUtils, $filter) 
     $scope.jstree_open_all = function () {
         $scope.treeInstance.jstree(true).open_all();
     };
-    
+
     $scope.jstree_close_all = function () {
         $scope.treeInstance.jstree(true).close_all();
     }

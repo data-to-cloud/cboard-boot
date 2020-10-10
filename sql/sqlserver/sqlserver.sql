@@ -54,7 +54,7 @@ CREATE TABLE dashboard_user (
 );
 
 INSERT INTO dashboard_user (user_id,login_name,user_name,user_password)
-VALUES('1','admin','Administrator','ff9830c42660c1dd1942844f8069b74a');
+VALUES('1','admin','Administrator','$2a$10$0Z1ik4yOqH3gqzu38J/0MuTgusxIHW3qqX6x6TxiwHs2CDi/mpA8.');
 
 CREATE TABLE dashboard_user_role (
   user_role_id bigint identity(1,1),

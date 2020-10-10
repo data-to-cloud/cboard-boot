@@ -5,7 +5,7 @@
 cBoard.controller('widgetCtrl', function ($scope, $state, $stateParams, $http, $uibModal, dataService, ModalUtils, updateService, $filter, chartService, $timeout) {
 
         var translate = $filter('translate');
-        var updateUrl = "dashboard/updateWidget.do";
+        var updateUrl = "dashboard/updateWidget";
         $scope.liteMode = false;
         $scope.tab = 'preview_widget2';
         //图表类型初始化
@@ -291,7 +291,7 @@ cBoard.controller('widgetCtrl', function ($scope, $state, $stateParams, $http, $
 
 
         var loadDataset = function (callback) {
-            $http.get("dashboard/getDatasetList.do").success(function (response) {
+            $http.get("dashboard/getDatasetList").success(function (response) {
                 $scope.datasetList = response;
                 if (callback) {
                     callback();
@@ -300,7 +300,7 @@ cBoard.controller('widgetCtrl', function ($scope, $state, $stateParams, $http, $
         };
         loadDataset();
 
-        $http.get("dashboard/getDatasourceList.do").success(function (response) {
+        $http.get("dashboard/getDatasourceList").success(function (response) {
             $scope.datasourceList = response;
             getCategoryList();
             getWidgetList(function () {
@@ -331,7 +331,7 @@ cBoard.controller('widgetCtrl', function ($scope, $state, $stateParams, $http, $
         };
 
         var getWidgetList = function (callback) {
-            $http.get("dashboard/getWidgetList.do").success(function (response) {
+            $http.get("dashboard/getWidgetList").success(function (response) {
                 $scope.widgetList = response;
                 if (callback) {
                     callback();
@@ -341,7 +341,7 @@ cBoard.controller('widgetCtrl', function ($scope, $state, $stateParams, $http, $
         };
 
         var getCategoryList = function () {
-            $http.get("dashboard/getWidgetCategoryList.do").success(function (response) {
+            $http.get("dashboard/getWidgetCategoryList").success(function (response) {
                 $scope.categoryList = response;
                 $("#widgetName").autocomplete({
                     source: $scope.categoryList
@@ -1039,7 +1039,7 @@ cBoard.controller('widgetCtrl', function ($scope, $state, $stateParams, $http, $
             }
 
             if ($scope.optFlag == 'new') {
-                $http.post("dashboard/saveNewWidget.do", {json: angular.toJson(o)}).success(function (serviceStatus) {
+                $http.post("dashboard/saveNewWidget", {json: angular.toJson(o)}).success(function (serviceStatus) {
                     if (serviceStatus.status == '1') {
                         getWidgetList();
                         getCategoryList();
@@ -1063,7 +1063,7 @@ cBoard.controller('widgetCtrl', function ($scope, $state, $stateParams, $http, $
         };
 
         $scope.editWgt = function (widget) {
-            $http.post("dashboard/checkWidget.do", {id: widget.id}).success(function (response) {
+            $http.post("dashboard/checkWidget", {id: widget.id}).success(function (response) {
                 if (response.status == '1') {
                     doEditWgt(widget);
                     if ($scope.customDs == true) $scope.doConfigParams();
@@ -1215,7 +1215,7 @@ cBoard.controller('widgetCtrl', function ($scope, $state, $stateParams, $http, $
 
         $scope.deleteWgt = function (widget) {
             ModalUtils.confirm(translate("COMMON.CONFIRM_DELETE"), "modal-info", "lg", function () {
-                $http.post("dashboard/deleteWidget.do", {id: widget.id}).success(function (serviceStatus) {
+                $http.post("dashboard/deleteWidget", {id: widget.id}).success(function (serviceStatus) {
                     if (serviceStatus.status == '1') {
                         getWidgetList();
                     } else {
@@ -1229,7 +1229,7 @@ cBoard.controller('widgetCtrl', function ($scope, $state, $stateParams, $http, $
         $scope.copyWgt = function (widget) {
             var o = angular.copy(widget);
             o.name = o.name + "_copy";
-            $http.post("dashboard/saveNewWidget.do", {json: angular.toJson(o)}).success(function (serviceStatus) {
+            $http.post("dashboard/saveNewWidget", {json: angular.toJson(o)}).success(function (serviceStatus) {
                 if (serviceStatus.status == '1') {
                     getWidgetList();
                     ModalUtils.alert(translate("COMMON.SUCCESS"), "modal-success", "sm");
@@ -1242,7 +1242,7 @@ cBoard.controller('widgetCtrl', function ($scope, $state, $stateParams, $http, $
 
         $scope.getQueryView = function () {
             if ($scope.datasource && $scope.datasource.name) {
-                return 'dashboard/getConfigView.do?type=' + $scope.datasource.type;
+                return 'dashboard/getConfigView?type=' + $scope.datasource.type;
             }
         };
 
@@ -1623,7 +1623,7 @@ cBoard.controller('widgetCtrl', function ($scope, $state, $stateParams, $http, $
         }();
 
         $scope.doConfigParams = function () {
-            $http.get('dashboard/getConfigParams.do', {
+            $http.get('dashboard/getConfigParams', {
                 params: {
                     type: $scope.datasource.type,
                     datasourceId: $scope.datasource.id,
@@ -1636,7 +1636,7 @@ cBoard.controller('widgetCtrl', function ($scope, $state, $stateParams, $http, $
 
         $scope.changeDs = function () {
             $scope.curWidget.query = {};
-            $http.get('dashboard/getConfigParams.do', {
+            $http.get('dashboard/getConfigParams', {
                 params: {
                     type: $scope.datasource.type,
                     datasourceId: $scope.datasource.id,

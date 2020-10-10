@@ -7,7 +7,7 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
     $scope.loading = true;
     $scope.paramInit = 0;
     $scope.relations = JSON.stringify([]);
-    $http.get("dashboard/getDatasetList.do").success(function (response) {
+    $http.get("dashboard/getDatasetList").success(function (response) {
         $scope.datasetList = response;
         $scope.realtimeDataset = {};
         $scope.datasetMeta = {};
@@ -80,7 +80,7 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
         }
     };
 
-    $http.post("admin/isConfig.do", {type: 'widget'}).success(function (response) {
+    $http.post("admin/isConfig", {type: 'widget'}).success(function (response) {
         $scope.widgetCfg = response;
     });
 
@@ -124,7 +124,7 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
         }
         $scope.exportStatus = true;
         $http({
-            url: "dashboard/exportBoard.do?id=" + $stateParams.id,
+            url: "dashboard/exportBoard?id=" + $stateParams.id,
             method: "POST",
             headers: {
                 'Content-type': 'application/json'
@@ -242,7 +242,7 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
                 });
             });
         }
-        $http.get("dashboard/getBoardData.do?id=" + $stateParams.id).success(function (response) {
+        $http.get("dashboard/getBoardData?id=" + $stateParams.id).success(function (response) {
             $scope.intervalGroup = {};
             $scope.loading = false;
             $scope.board = response;
@@ -448,7 +448,7 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
     $scope.config = function (widget) {
         $state.go('config.widget', {id: widget.widget.id});
     };
-    
+
     $scope.skip = function (widget) {
          $state.go('dashboard.category.view', {id: widget.extenal.targetId});
     };
@@ -478,7 +478,7 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
         });
     };
 
-    $http.get("dashboard/getBoardParam.do?boardId=" + $stateParams.id).success(function (response) {
+    $http.get("dashboard/getBoardParam?boardId=" + $stateParams.id).success(function (response) {
         if (response) {
             $scope.boardParams = JSON.parse(response.config);
         } else {
@@ -499,7 +499,7 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
             });
         });
         $scope.boardParams.unshift({name: name, params: params});
-        $http.post("dashboard/saveBoardParam.do", {
+        $http.post("dashboard/saveBoardParam", {
             boardId: $stateParams.id,
             config: angular.toJson($scope.boardParams)
         }).success(function (response) {
@@ -512,7 +512,7 @@ cBoard.controller('dashboardViewCtrl', function ($timeout, $rootScope, $scope, $
 
     $scope.deleteBoardParam = function (index) {
         $scope.boardParams.splice(index, 1);
-        $http.post("dashboard/saveBoardParam.do", {
+        $http.post("dashboard/saveBoardParam", {
             boardId: $stateParams.id,
             config: angular.toJson($scope.boardParams)
         }).success(function (response) {

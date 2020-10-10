@@ -53,7 +53,7 @@ cBoard.controller('renderCtrl', function ($timeout, $rootScope, $scope, $state, 
                     data: result
                 };
                 var xmlhttp = new XMLHttpRequest();
-                xmlhttp.open("POST", "commons/persist.do", false);
+                xmlhttp.open("POST", "commons/persist", false);
                 xmlhttp.send(angular.toJson(obj));
                 $scope.$apply(function () {
                     $scope.persistFinish = true;
@@ -72,7 +72,7 @@ cBoard.controller('renderCtrl', function ($timeout, $rootScope, $scope, $state, 
                 });
             });
         }
-        $http.get("dashboard/getBoardData.do?id=" + $location.search().id).success(function (response) {
+        $http.get("dashboard/getBoardData?id=" + $location.search().id).success(function (response) {
             $scope.loading = false;
             $scope.board = response;
             _.each($scope.board.layout.rows, function (row) {

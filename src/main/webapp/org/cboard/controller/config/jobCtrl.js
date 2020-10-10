@@ -7,7 +7,7 @@ cBoard.controller('jobCtrl', function ($scope, $rootScope, $http, dataService, $
     $scope.jobTypes = [{name: 'Send Mail', type: 'mail'}];
 
     $scope.interval = $interval(function () {
-        $http.get("dashboard/getJobList.do").success(function (response) {
+        $http.get("dashboard/getJobList").success(function (response) {
             _.each($scope.jobList, function (e) {
                 var j = _.find(response, function (r) {
                     return e.id == r.id;
@@ -26,7 +26,7 @@ cBoard.controller('jobCtrl', function ($scope, $rootScope, $http, dataService, $
     );
 
     $scope.loadJobList = function () {
-        $http.get("dashboard/getJobList.do").success(function (response) {
+        $http.get("dashboard/getJobList").success(function (response) {
             $scope.jobList = response;
         });
     };
@@ -74,7 +74,7 @@ cBoard.controller('jobCtrl', function ($scope, $rootScope, $http, dataService, $
     };
 
     $scope.runJob = function (job) {
-        $http.post("dashboard/execJob.do", {id: job.id}).success(function (serviceStatus) {
+        $http.post("dashboard/execJob", {id: job.id}).success(function (serviceStatus) {
             if (serviceStatus.status == '1') {
                 job.jobStatus = 2;
                 // $scope.loadJobList();
@@ -117,7 +117,7 @@ cBoard.controller('jobCtrl', function ($scope, $rootScope, $http, dataService, $
                 };
                 $scope.ok = function () {
                     if (job) {
-                        $http.post("dashboard/updateJob.do", {json: angular.toJson($scope.job)}).success(function (serviceStatus) {
+                        $http.post("dashboard/updateJob", {json: angular.toJson($scope.job)}).success(function (serviceStatus) {
                             if (serviceStatus.status == '1') {
                                 ModalUtils.alert(translate("COMMON.SUCCESS"), "modal-success", "sm");
                                 $scope.$parent.loadJobList();
@@ -127,7 +127,7 @@ cBoard.controller('jobCtrl', function ($scope, $rootScope, $http, dataService, $
                             }
                         });
                     } else {
-                        $http.post("dashboard/saveJob.do", {json: angular.toJson($scope.job)}).success(function (serviceStatus) {
+                        $http.post("dashboard/saveJob", {json: angular.toJson($scope.job)}).success(function (serviceStatus) {
                             if (serviceStatus.status == '1') {
                                 ModalUtils.alert(translate("COMMON.SUCCESS"), "modal-success", "sm");
                                 $scope.$parent.loadJobList();
@@ -154,7 +154,7 @@ cBoard.controller('jobCtrl', function ($scope, $rootScope, $http, dataService, $
 
     $scope.deleteJob = function (job) {
         ModalUtils.confirm(translate("COMMON.CONFIRM_DELETE"), "modal-info", "lg", function () {
-            $http.post("dashboard/deleteJob.do", {id: job.id}).success(function (serviceStatus) {
+            $http.post("dashboard/deleteJob", {id: job.id}).success(function (serviceStatus) {
                 if (serviceStatus.status == '1') {
                     $scope.loadJobList();
                 } else {
