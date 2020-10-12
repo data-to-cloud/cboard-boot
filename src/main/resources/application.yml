@@ -95,7 +95,7 @@ caso:
     url: http://localhost:8026
     check: ${caso.client.url}/login/cas
   server:
-    url: http://your-casserver-ip/caso
+    url: http://localhost:8080/caso
     login: ${caso.server.url}/login
     logout: ${caso.server.url}/logout?service=${caso.client.url}
 
