@@ -13,6 +13,7 @@ import org.springframework.security.cas.ServiceProperties;
 import org.springframework.security.cas.authentication.CasAuthenticationProvider;
 import org.springframework.security.cas.web.CasAuthenticationEntryPoint;
 import org.springframework.security.cas.web.CasAuthenticationFilter;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -98,12 +99,6 @@ public class CasConfig extends WebSecurityConfigurerAdapter {
         return casAuthenticationEntryPoint;
     }
 
-    @Bean
-    @Override
-    public AuthenticationManager authenticationManagerBean() throws Exception {
-        return super.authenticationManagerBean();
-    }
-
 
     @Bean
     public CasAuthenticationFilter casAuthenticationFilter() throws Exception{
@@ -113,7 +108,7 @@ public class CasConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    public ShareAuthenticationProviderDecorator shareAuthenticationProviderDecorator(){
+    public ShareAuthenticationProviderDecorator casShareAuthenticationProviderDecorator(){
         ShareAuthenticationProviderDecorator shareAuthenticationProviderDecorator = new ShareAuthenticationProviderDecorator();
         shareAuthenticationProviderDecorator.setAuthenticationProvider(casAuthenticationProvider());
         return  shareAuthenticationProviderDecorator;
@@ -139,5 +134,11 @@ public class CasConfig extends WebSecurityConfigurerAdapter {
         //所有资源都验证
         http.exceptionHandling().authenticationEntryPoint(casAuthenticationEntryPoint()).and()
                 .antMatcher("/**").authorizeRequests().anyRequest().authenticated();
+    }
+
+
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.authenticationProvider(casShareAuthenticationProviderDecorator());
     }
 }

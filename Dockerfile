@@ -12,8 +12,9 @@ RUN apk add --no-cache tzdata  \
 
 VOLUME /tmp
 
-ADD ./target/cboard-0.0.1-SNAPSHOT.jar /cboard/cboard.jar
+ADD ./target/cboard-0.0.1-SNAPSHOT.jar /cboard.jar
+ADD ./src/main/resources/template /template
 
 EXPOSE 8089
 
-ENTRYPOINT ["java","-XX:+UnlockExperimentalVMOptions","-XX:+UseCGroupMemoryLimitForHeap","-Djava.security.egd=file:/dev/./urandom","-jar","/cboard/cboard.jar"]
+ENTRYPOINT ["java","-XX:+UnlockExperimentalVMOptions","-XX:+UseCGroupMemoryLimitForHeap","-Djava.security.egd=file:/dev/./urandom","-jar","/cboard.jar"]
