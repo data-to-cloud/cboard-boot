@@ -11,6 +11,7 @@ import org.cboard.pojo.*;
 import org.cboard.services.role.RolePermission;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -44,8 +45,11 @@ public class AdminSerivce {
     @Autowired
     private BoardDao boardDao;
 
+    @Autowired
+    PasswordEncoder passwordEncoder;
+
     public String addUser(String userId, String loginName, String userName, String userPassword) {
-        String md5 = Hashing.md5().newHasher().putString(userPassword, Charsets.UTF_8).hash().toString();
+        String md5 = passwordEncoder.encode(userPassword);
         DashboardUser user = new DashboardUser();
         user.setLoginName(loginName);
         user.setUserId(userId);
@@ -61,7 +65,7 @@ public class AdminSerivce {
         user.setUserId(userId);
         user.setUserName(userName);
         if (StringUtils.isNotBlank(userPassword)) {
-            String md5 = Hashing.md5().newHasher().putString(userPassword, Charsets.UTF_8).hash().toString();
+            String md5 = passwordEncoder.encode(userPassword);
             user.setUserPassword(md5);
         }
         userDao.update(user);
@@ -148,7 +152,7 @@ public class AdminSerivce {
                 roleRes.setResType(jo.getString("resType"));
                 roleRes.setPermission("" + (false ? 1 : 0) + (false ? 1 : 0));
                 roleDao.saveRoleRes(roleRes);
-            }            
+            }
         }
         return "1";
     }
@@ -176,9 +180,9 @@ public class AdminSerivce {
     }
 
     public ServiceStatus changePwd(String userId, String curPwd, String newPwd, String cfmPwd) {
-        curPwd = Hashing.md5().newHasher().putString(curPwd, Charsets.UTF_8).hash().toString();
-        newPwd = Hashing.md5().newHasher().putString(newPwd, Charsets.UTF_8).hash().toString();
-        cfmPwd = Hashing.md5().newHasher().putString(cfmPwd, Charsets.UTF_8).hash().toString();
+        curPwd = passwordEncoder.encode(curPwd);
+        newPwd = passwordEncoder.encode(newPwd);
+        cfmPwd = passwordEncoder.encode(cfmPwd);
         if (newPwd.equals(cfmPwd)) {
             if (userDao.updateUserPassword(userId, curPwd, newPwd) == 1) {
                 return new ServiceStatus(ServiceStatus.Status.Success, "success");
