@@ -30,7 +30,7 @@ public class DataProviderViewManager {
 
     static {
         Properties props = new Properties();
-        String fileDir = "/template/config";
+        String fileDir = "/Users/yqwoe/workspace/cboard/src/main/resources/template/config";
 
         try {
             fileDir = URLDecoder.decode(fileDir, "UTF-8");

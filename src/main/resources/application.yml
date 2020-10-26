@@ -9,8 +9,8 @@ spring:
   datasource:
     password: 123456
     type: com.alibaba.druid.pool.DruidDataSource
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/cboard?characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/cboard2?characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
     username: root
   druid:
     initialSize: 5 #初始化连接大小

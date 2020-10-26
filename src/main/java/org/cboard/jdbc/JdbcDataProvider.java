@@ -321,11 +321,10 @@ public class JdbcDataProvider extends DataProvider implements Aggregatable, Init
         String exec = sqlHelper.assembleAggDataSql(config);
         List<String[]> list = new LinkedList<>();
         LOG.info(exec);
-        try (
-                Connection connection = getConnection();
-                Statement stat = connection.createStatement();
-                ResultSet rs = stat.executeQuery(exec)
-        ) {
+        try{
+            Connection connection = getConnection();
+            PreparedStatement ps = connection.prepareStatement(exec);
+            ResultSet rs = ps.executeQuery();
             ResultSetMetaData metaData = rs.getMetaData();
             int columnCount = metaData.getColumnCount();
             while (rs.next()) {
